@@ -1,0 +1,15 @@
+# Principios básicos del CODA
+
+##  Reemplazos composicionales del `tool kit` tradicional 👀
+
+<br>
+<center>![](images/tecnicas_AD.PNG)</center>
+
+<br>
+
+##  CODA en acción 😎
+
+
+<!-- Hasta aquí -->
+
+You can also [strike through]{.strike}, [cross-off]{.cross}, [highlight]{.highlight}, and [circle]{.circle} text

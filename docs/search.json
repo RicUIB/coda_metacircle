@@ -1,0 +1,86 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "CODA para estudios del microbioma Seminario para protecto METACIRCLE XXXX",
+    "section": "",
+    "text": "Introducción 👋\n- Los estudios sobre el microbioma humano se enmarcan en el ámbito de los datos de composición, ya que <font color=“blue”> las abundancias absolutas de microorganismos no pueden obtenerse a partir de los datos de secuenciación</font>.\n- Cada muestra consiste en proporciones de varios microrganismos con una suma limitada a una constante. Esta simple característica hace que <font color=“blue”> los tratamientos estadísticos tradicionales lleven a resultados erróneos y correlaciones espurias</font>."
+  },
+  {
+    "objectID": "Coda_jueves8.html#introducción",
+    "href": "Coda_jueves8.html#introducción",
+    "title": "1  Todo",
+    "section": "1.1 Introducción 👋",
+    "text": "1.1 Introducción 👋\n\nLos estudios sobre el microbioma humano se enmarcan en el ámbito de los datos de composición, ya que  las abundancias absolutas de microorganismos no pueden obtenerse a partir de los datos de secuenciación.\nCada muestra consiste en proporciones de varios microrganismos con una suma limitada a una constante. Esta simple característica hace que  los tratamientos estadísticos tradicionales lleven a resultados erróneos y correlaciones espurias.\n\n\n1.1.1 Objetivos del seminario 🎯\ni.- Discutiremos los orígenes de la composicionalidad en los datos del microbioma.\nii.- Mostraremos los principales problemas de utilizar los métodos estadísticos tradicionales para tratar los datos de secuenciación.\niii.- Indicaremos los reemplazos composicionales de las técnicas del tool kit de análisis de datos de microbioma.\niv.- CODA en acción: trabajaremos con un ejemplo de datos de la microbiota humana, veremos el tipo de resultados que podemos obtener."
+  },
+  {
+    "objectID": "Coda_jueves8.html#los-datos-de-secuenciación-son-composicionales",
+    "href": "Coda_jueves8.html#los-datos-de-secuenciación-son-composicionales",
+    "title": "1  Todo",
+    "section": "1.2 1. Los datos de secuenciación son composicionales 🤯",
+    "text": "1.2 1. Los datos de secuenciación son composicionales 🤯\n\n\nLos datos obtenidos después de la secuenciación no son equivalentes a los datos ecológicos.\nEn un estudio ecológico es posible que coexistan muchas especies diferentes y su abundacia absoluta puede ser importante.\n\nEn los datos de secuenciación de alto rendimiento (HTS ):\n\n El número de lecturas no representa la abundancia total o absoluta en el ecosistema. El secuenciador solo puede proporcionar lecturas hasta su capacidad.\n\n\n\n\n\n\nLa frecuencia de lecturas observadas en un experimento de HTS es una muestra aleatoria de tamaño fijo de la abundancia relativa de las moléculas en el ecosistema subyacente.\nEsto se reconoce implícitamente cuando los datos del microbioma se convierten en valores de abundancia relativa o conteos normalizados,o se “enrarecen” (rarefying). Ninguno de estos enfoques corrige la la composicionalidad \n\n\n\n\nLos datos que se describen de forma natural como proporciones o probabilidades, o con una suma constante o irrelevante, se denominan datos composicionales.\nLos datos de composición contienen información sobre las relaciones entre las partes. \n\n\n Podemos ver la diferencia entre conteos y proporciones comparando los datos de tres muestras en el gráfico que se presenta a continuación.\n\nLos diagramas de barras que se presentan a continuación muestran la diferencia entre el conteo de moléculas y la proporción de moléculas para dos características, A y B en tres muestras.\n\n\n\n\nObserva que las muestras 2 y 3 tienen las mismas abundancias proporcionales, aunque tengan conteos absolutos diferentes antes de la secuenciación.\nEn la tabla podemos observar que la relación entre la abundancia absoluta y la abundancia relativa cambia de manera significativa."
+  },
+  {
+    "objectID": "Coda_jueves8.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "href": "Coda_jueves8.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "title": "1  Todo",
+    "section": "1.3 2. Problemas que surgen cuando no se utiliza el paradigma composicional 😵",
+    "text": "1.3 2. Problemas que surgen cuando no se utiliza el paradigma composicional 😵\n\n\nTrabajar con proporciones induce correlación espuria (Pearson 1896).\n\nDos o más OTUs estarán correlacionados simplemente porque los datos han sido transformados a una suma constante.\n\n\n\n\n\nTrabajar con proporciones induce incoherencia subcomposicional\n\n\n\n\n\nNo importa el tipo de correlación: Spearman, Pearson, etc\n\n\n\n\n\n\n Comprender que existe un problema de correlación es importante porque ésta juega un rol fundamental en las técnicas clásicas de análisis de datos multivariantes como clustering, MDS, network analysis. \n\n\n\n\nMatrices de distancia o dissimilaridad después de la normalización no toman en cuenta la naturaleza composicional de los datos\n\n\nEl número total de recuentos observados (a menudo denominado como profundidad de lectura) es un factor de confusión importante para los cálculos de distancia o disimilitud.\nLos primeros intentos en el campo del microbioma utilizaron la “rarefacción” o el submuestreo de cada muestra a una profundidad de lectura común para intentar corregir este problema. El uso del submuestreo resulta en una pérdida de información y precisión.\nLa normalización de recuentos se ha utilizado y existen varios métodos: la media truncada (TMM) y el método de la mediana. Ambos son similares a las transformaciones de un log-ratios, pero son menos adecuados en conjuntos de datos muy asimétricos o dispersos.\nEstas transformaciones son además indeseables, ya que el número de recuentos observados por el instrumento, por diseño, no puede contener ninguna información sobre el número real de moléculas en el entorno, y porque el investigador interpreta los resultados como recuentos en lugar de relaciones logarítmicas.\n\n\n\n\n\nDistribución de las tasas de falsos positivos en réplicas simuladas de datos transformados y no transformados (Nearing et al. Nat.Comm 2022)"
+  },
+  {
+    "objectID": "Coda_jueves8.html#principios-básicos-del-coda",
+    "href": "Coda_jueves8.html#principios-básicos-del-coda",
+    "title": "1  Todo",
+    "section": "1.4 3. Principios básicos del CODA",
+    "text": "1.4 3. Principios básicos del CODA"
+  },
+  {
+    "objectID": "Coda_jueves8.html#reemplazos-composicionales-del-tool-kit-tradicional",
+    "href": "Coda_jueves8.html#reemplazos-composicionales-del-tool-kit-tradicional",
+    "title": "1  Todo",
+    "section": "1.5 3. Reemplazos composicionales del tool kit tradicional 👀",
+    "text": "1.5 3. Reemplazos composicionales del tool kit tradicional 👀"
+  },
+  {
+    "objectID": "Coda_jueves8.html#coda-en-acción",
+    "href": "Coda_jueves8.html#coda-en-acción",
+    "title": "1  Todo",
+    "section": "1.6 4. CODA en acción 😎",
+    "text": "1.6 4. CODA en acción 😎\n\nYou can also strike through, cross-off, highlight, and circle text"
+  },
+  {
+    "objectID": "tema1.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "href": "tema1.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "title": "1  Los datos de secuenciación son composicionales 🤯",
+    "section": "1.1 Problemas que surgen cuando no se utiliza el paradigma composicional 😵",
+    "text": "1.1 Problemas que surgen cuando no se utiliza el paradigma composicional 😵\n\n\nTrabajar con proporciones induce correlación espuria (Pearson 1896).\n\nDos o más OTUs estarán correlacionados simplemente porque los datos han sido transformados a una suma constante.\n\n\n\n\n\nTrabajar con proporciones induce incoherencia subcomposicional\n\n\n\n\n\nNo importa el tipo de correlación: Spearman, Pearson, etc\n\n\n\n\n\n\n Comprender que existe un problema de correlación es importante porque ésta juega un rol fundamental en las técnicas clásicas de análisis de datos multivariantes como clustering, MDS, network analysis. \n\n\n\n\nMatrices de distancia o dissimilaridad después de la normalización no toman en cuenta la naturaleza composicional de los datos\n\n\nEl número total de recuentos observados (a menudo denominado como profundidad de lectura) es un factor de confusión importante para los cálculos de distancia o disimilitud.\nLos primeros intentos en el campo del microbioma utilizaron la “rarefacción” o el submuestreo de cada muestra a una profundidad de lectura común para intentar corregir este problema. El uso del submuestreo resulta en una pérdida de información y precisión.\nLa normalización de recuentos se ha utilizado y existen varios métodos: la media truncada (TMM) y el método de la mediana. Ambos son similares a las transformaciones de un log-ratios, pero son menos adecuados en conjuntos de datos muy asimétricos o dispersos.\nEstas transformaciones son además indeseables, ya que el número de recuentos observados por el instrumento, por diseño, no puede contener ninguna información sobre el número real de moléculas en el entorno, y porque el investigador interpreta los resultados como recuentos en lugar de relaciones logarítmicas.\n\n\n\n\n\nDistribución de las tasas de falsos positivos en réplicas simuladas de datos transformados y no transformados (Nearing et al. Nat.Comm 2022)"
+  },
+  {
+    "objectID": "tema2.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "href": "tema2.html#problemas-que-surgen-cuando-no-se-utiliza-el-paradigma-composicional",
+    "title": "2  Los datos de secuenciación son composicionales 🤯",
+    "section": "2.1 Problemas que surgen cuando no se utiliza el paradigma composicional 😵",
+    "text": "2.1 Problemas que surgen cuando no se utiliza el paradigma composicional 😵\n\n\nTrabajar con proporciones induce correlación espuria (Pearson 1896).\n\nDos o más OTUs estarán correlacionados simplemente porque los datos han sido transformados a una suma constante.\n\n\n\n\n\nTrabajar con proporciones induce incoherencia subcomposicional\n\n\n\n\n\nNo importa el tipo de correlación: Spearman, Pearson, etc\n\n\n\n\n\n\n Comprender que existe un problema de correlación es importante porque ésta juega un rol fundamental en las técnicas clásicas de análisis de datos multivariantes como clustering, MDS, network analysis. \n\n\n\n\nMatrices de distancia o dissimilaridad después de la normalización no toman en cuenta la naturaleza composicional de los datos\n\n\nEl número total de recuentos observados (a menudo denominado como profundidad de lectura) es un factor de confusión importante para los cálculos de distancia o disimilitud.\nLos primeros intentos en el campo del microbioma utilizaron la “rarefacción” o el submuestreo de cada muestra a una profundidad de lectura común para intentar corregir este problema. El uso del submuestreo resulta en una pérdida de información y precisión.\nLa normalización de recuentos se ha utilizado y existen varios métodos: la media truncada (TMM) y el método de la mediana. Ambos son similares a las transformaciones de un log-ratios, pero son menos adecuados en conjuntos de datos muy asimétricos o dispersos.\nEstas transformaciones son además indeseables, ya que el número de recuentos observados por el instrumento, por diseño, no puede contener ninguna información sobre el número real de moléculas en el entorno, y porque el investigador interpreta los resultados como recuentos en lugar de relaciones logarítmicas.\n\n\n\n\n\nDistribución de las tasas de falsos positivos en réplicas simuladas de datos transformados y no transformados (Nearing et al. Nat.Comm 2022)"
+  },
+  {
+    "objectID": "tema3.html#reemplazos-composicionales-del-tool-kit-tradicional",
+    "href": "tema3.html#reemplazos-composicionales-del-tool-kit-tradicional",
+    "title": "3  Principios básicos del CODA",
+    "section": "3.1 Reemplazos composicionales del tool kit tradicional 👀",
+    "text": "3.1 Reemplazos composicionales del tool kit tradicional 👀"
+  },
+  {
+    "objectID": "tema3.html#coda-en-acción",
+    "href": "tema3.html#coda-en-acción",
+    "title": "3  Principios básicos del CODA",
+    "section": "3.2 4. CODA en acción 😎",
+    "text": "3.2 4. CODA en acción 😎\n\nYou can also strike through, cross-off, highlight, and circle text"
+  },
+  {
+    "objectID": "index.html#objetivos-del-seminario",
+    "href": "index.html#objetivos-del-seminario",
+    "title": "CODA para estudios del microbioma Seminario para protecto METACIRCLE XXXX",
+    "section": "Objetivos del seminario 🎯",
+    "text": "Objetivos del seminario 🎯\n*i.- Discutiremos los `orígenes` de la composicionalidad en los datos del microbioma.*\n*ii.- Mostraremos los principales `problemas` de utilizar los métodos estadísticos tradicionales para tratar los datos de secuenciación.*\n*iii.- Indicaremos los reemplazos composicionales de las técnicas del `tool kit` de análisis de datos de microbioma.*\n*iv.- `CODA en acción`: trabajaremos con un ejemplo de datos de la microbiota humana, veremos el tipo de resultados que podemos obtener.*"
+  }
+]

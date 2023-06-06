@@ -1,0 +1,82 @@
+---
+title: "Kernels "
+author: "UIB"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache=TRUE)
+```
+
+# Define experiment and load data
+
+The results of MetaDag Web Tool areat the folder
+
+```{r}
+experiment="result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf"
+path=paste0("data/result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf","/data/")
+path
+setwd("data/result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf/data/Individuals/")
+dir()
+```
+
+# Read all graphs from a level of the experiment
+
+Read all graphs from a level from experiment; for example individuals. We read only firts (alphabetic)  two graph
+
+```{r}
+list_names=dir(paste0(path,"Individuals/"))
+list_names
+list_names= list_names[-1] # filter 0000_RefPw
+length(list_names)
+k=length(list_names)
+list_names= list_names[1:k] # select ONLY 5 individuals
+list_names
+dir(paste0("Individuals/",list_names[1],"/"))
+library(igraph)
+graphs_list=paste0(path,"Individuals/",list_names,"/",list_names,"_MDAG.graphml")
+g_MDAG_list=
+  lapply(graphs_list,FUN=function(x) read.graph(file=x,
+                    format="graphml"))
+names(g_MDAG_list)=list_names
+summary(g_MDAG_list[[1]])
+head(as_long_data_frame(g_MDAG_list[[1]]))
+
+```
+
+
+**Graph Kernels package**
+
+[graphkernels: R and Python packages for graph comparison](https://academic.oup.com/bioinformatics/article/34/3/530/4209994?login=true)
+statGraph’
+[Discriminating Different Classes of Biological Networks by Analyzing the Graphs Spectra Distribution](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0049949)
+
+```{r}
+plot.igraph(g_MDAG_list[[1]],layout=layout_as_tree,
+            label=NA,label.cex=0)
+```
+
+
+```{r}
+knitr::include_graphics("data/result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf/data/Individuals/cang/cang_mDAG.svg")
+```
+
+```{r}
+knitr::include_graphics("data/result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf/data/Individuals/cang/cang_mDAG_essential.svg")
+```
+
+```{r}
+knitr::include_graphics("data/result_9ed945b7-6fd7-30de-80a3-01b4e8528ebf/data/Individuals/cang/cang_RC.svg")
+```
+
+
+```
+library(DOT)
+dot("raw_data/result_d34a984d-d1ba-38d9-9c20-642ef834bbcd/data/Individuals/aag/aag_mDAG2.dot",return="svg")
+```
+
+
+
+
+

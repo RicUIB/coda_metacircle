@@ -1,0 +1,26 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "CODA para estudios del microbioma\n 
+  Seminario para protecto METACIRCLE XXXX"
+  author: "Grupo BIOCOM"
+  date: "8 Junio 2023"
+  
+  chapters:
+    - index.qmd
+    - tema1.qmd
+    - tema2.qmd
+    - tema3.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: Journal
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+
