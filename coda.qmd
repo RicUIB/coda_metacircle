@@ -16,15 +16,15 @@ toc: true
 
 ### Objetivos del seminario 🎯
 
-*1.- Discutiremos las diferencias entre trabajar con conteos absolutos y conteos normalizados.*
+1.- Discutiremos las diferencias entre trabajar con conteos absolutos (abundancias absolutas) y conteos normalizados (abundancias relativas).
 
-*2.- Indicaremos los principios de CODA*
+2.- Indicaremos los principios de CODA.
 
-*3.- Mostraremos los reemplazos composicionales para las técnicas del `tool kit` de análisis de datos de microbioma.*
+3.- Mostraremos el `tool kit` de CODA de microbioma.
 
-*4.- `CODA en acción`: ejemplo de datos de la microbiota humana.*
+4.- `CODA en acción`: ejemplo de análisis de datos composicionales.
 
-## 1. Diferencias entre trabajar con conteos absolutos y conteos normalizados 🤯
+## 1. Inconvenientes de trabajar con conteos absolutos y conteos normalizados 🤯
 
 En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
@@ -34,13 +34,12 @@ En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
 <center>![](images/poblacion.PNG)</center>
 
-<br>
+- <font color="red">No podemos comparar muestras con conteos absolutos.</font>
 
 -   Podemos ver la diferencia entre conteos y proporciones comparando los datos de tres muestras en el gráfico que se presenta a continuación.
 
 <center>![](images/abundancias_relativas.PNG)</center>
 
-<br>
 
 -   Los diagramas de barras muestran la diferencia entre el conteo de moléculas y la proporción de moléculas para dos características, A y B en tres muestras.
 
@@ -48,11 +47,9 @@ En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
 -   En la tabla podemos observar que <font color="red">la relación entre la abundancia absoluta y la abundancia relativa cambia de manera significativa </font>.
 
-<br>
 
-### <font color="blue">Las sumas totales de las filas es un confundidor </font> 😵
+### <font color="blue"> Inconvenientes de compararar muestras con abundancias relativas </font> 😵
 
-<br>
 
 -   Si normalizamos, de manera de que las sumas totales de las filas no importa, entonces las matrices de distancias usuales entre muestras, cambian.
 
@@ -60,16 +57,17 @@ En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
 ```{r}
 set.seed(5)
+library(ecodist)
 x= round( rnorm (3 ,100 ,10) )
 y= round( rnorm (3 ,100 ,10) )
 z= round( rnorm (3 ,1000 ,100) )
-X= cbind(x,y,z) 
-X  #Conteos absolutos
-ecodist::bcdist(X) # Matriz de distancia de Bray-Curtis conteos absolutos
+X= cbind(x,y,z)
+knitr::kable(X) #Conteos absolutos
+knitr::kable(as.matrix(bcdist(X),ncol=2)) # Matriz de distancia de Bray-Curtis conteos absolutos
 
 X1=apply(X, 1, function (x) x/sum(x)) 
-X1 #Conteos normalizados
-ecodist::bcdist(X1) # Matriz de distancia de Bray-Curtis conteos normalizados
+knitr::kable(X1) #Conteos normalizados
+knitr::kable(as.matrix(bcdist(X1),ncol=2)) # Matriz de distancia de Bray-Curtis conteos normalizados
 ```
 
 <br>
@@ -96,7 +94,7 @@ Dos o más OTUs estarán correlacionados simplemente porque los datos han sido t
 
 <br>
 
--   Si el tamaño de la muestra es constante, los conteos de los microorganismos no son variables independientes.
+-   <font color="red"> Si hemos normalizado, los conteos de los microorganismos no son variables independientes ya que están ligados por el valor de la suma.</font>
 
 <center>![](images/nature.PNG)</center>
 
@@ -107,14 +105,14 @@ Dos o más OTUs estarán correlacionados simplemente porque los datos han sido t
 ::: box
 <p class="text-danger">
 
-<font color="red">Los datos que se describen de forma natural como proporciones o probabilidades, o con una suma constante o irrelevante, se denominan datos composicionales.
-
-**Los datos de composición contienen información sobre las relaciones entre las partes.** </font>
-
+<font color="red"> Utilizamos otra forma de "normalizar" que preserva la composición de cada muestra y nos permite compararlas: 
+<center>
+</font>**CODA= Compositional Data Analysis**
+</center>
 </p>
 :::
+ 
 
-<br>
 
 <center>![](images/frontiers.PNG)</center>
 
@@ -122,9 +120,13 @@ Dos o más OTUs estarán correlacionados simplemente porque los datos han sido t
 
 ## 2. Principios básicos del CODA
 
-<center>![](images/coda_1.PNG)</center>
+* Cada muestra se considera como un vector de datos composicionales $(x_1, \ldots, x_k)$ con cada $x_i \geq 0$.
 
-<br>
+* Consideramos que dos vectores son equivalentes cuando son proporcionales.
+
+* El análisis de los datos se basa en las ratios $x_i/x_j$.
+
+* Las ratios se transforman mediante logaritmos para traducir comparación relativa en comparación absoluta (y para acercar las ratios a una normal).
 
 [Estas transformaciones producen los mismos resultados si los conteos son absolutos o proporciones]{.highlight}.
 
@@ -136,27 +138,37 @@ Dos o más OTUs estarán correlacionados simplemente porque los datos han sido t
 
 <br>
 
-<font color="blue"> Los cocientes logarítmicos tienen la propiedad de que su espacio muestral son números reales, una gran ventaja para la aplicación de los métodos estadísticos estándar desarrollados para variables aleatorias reales.</font>
+<font color="blue"> Los cocientes logarítmicos son números reales, una gran ventaja para la aplicación de los métodos estadísticos estándar desarrollados para variables aleatorias continuas.</font>
 
 A menudo se utiliza la transformación log-ratio centrada (clr) introducida Aitchison (1986).
 
-<center>![](images/clr.PNG)</center>
+Dado un vector $\mathbf{x}$ de conteos de OTUs, $\mathbf{x}=(x_1, \ldots,x_D)$, su transformación **clr** es:
 
--   Los valores son invariantes con respecto a la escala; es decir, se espera obtener la misma proporción en una muestra con pocos recuentos de lecturas o en una muestra idéntica con muchos recuentos de lecturas, solo se ve afectada la precisión de la estimación de clr. <font color="red"> La normalización de los conteos es innecesaria</font>.
+$$\mathbf{x}_{clr}= \left( \log(x_1/g(\mathbf{x})),\ldots, \log(x_D/g(\mathbf{x}))\right),$$
 
--   Los valores transformados clr pueden utilizarse como entradas para pruebas de hipótesis multivariantes mediante herramientas como MANOVA, regresión, etc.
+donde $g(\mathbf{x})$ es la media geométrica de $\mathbf{x}$, es decir, $g(\mathbf{x})=\sqrt[D]{x_1 \cdot x_2 \cdots x_D}$.
 
-![](images/ceros.PNG){width="45%"}
 
--   La media (geométrica) no puede determinarse para datos dispersos sin eliminar, sustituir o estimar los valores de recuento 0.
+**Tratamiento de los ceros:** 
 
--   Existen diversos métodos para tratar los valores de recuento tanto estimaciones puntuales utilizando el paquete `zCompositions` de R, como una distribución de probabilidad utilizando `ALDEx2` disponible en Bioconductor.
+-   Si alguna variable es cero, no se pueden calcular las ratios.
+
+-   Imputación de ceros: `zCompositions` de R, como una distribución de probabilidad utilizando `ALDEx2` disponible en Bioconductor.
+
+
+### <font color="red"> Metodología </font>
+
+::: box
+<center>![](images/proceso.PNG)</center>
+:::
+
 
 ## 3. Reemplazos composicionales del `tool kit` tradicional 👀
 
+
 <br>
 
-<center>![](images/tecnicas_AD.PNG)</center>
+<center>![](images/tabla_1.PNG)</center>
 
 <br>
 
@@ -170,18 +182,10 @@ A menudo se utiliza la transformación log-ratio centrada (clr) introducida Aitc
 
 **Correlaciones de datos composicionales**
 
-Existen varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices "sparce". Uno de ellos es:
-
--   [SparCC]{.highlight} En lugar de calcular todas las correlaciones posibles, utiliza la técnica de "shrinkage" para estimar solo las correlaciones más fuertes y confiables. Esto permite lidiar con matrices de datos de alta dimensionalidad.
-
-### <font color="red"> Metodología </font>
-
-::: box
-<center>![](images/proceso.PNG)</center>
-:::
+Existen varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices "sparce". Uno de ellos es `r-sparc`.
 
 ## 4. CODA en acción 😎
 
 <br>
 
-<center>![](https://www.taiwisdom.org/artclnchdev/copy_of_timeout.gif){width="60%"}</center>
+<center>![](https://www.taiwisdom.org/artclnchdev/copy_of_timeout.gif){width="40%"}</center>
