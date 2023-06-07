@@ -3,10 +3,9 @@ project:
   output-dir: docs
 
 book:
-  title: "CODA para estudios del microbioma\n 
-  Seminario para protecto METACIRCLE XXXX"
+  title: "CODA para estudios del microbioma Seminario del proyecto METACIRCLE"
   author: "Grupo BIOCOM"
-  date: "8 Junio 2023"
+  date: "8-9 Junio 2023"
   
   chapters:
     - index.qmd

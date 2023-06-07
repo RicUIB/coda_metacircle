@@ -1,0 +1,189 @@
+---
+title: "CODA para estudios del microbioma"
+subtitle: "Seminario para METACIRCLE"
+author: "Grupo BIOCOM"
+date: "8 Junio 2023"
+institute: "Dpto. Matemáticas e Informática - UIB"
+format: sketchy-html
+toc: true
+---
+
+## Introducción 👋
+
+-   Los conjuntos de datos recogidos mediante secuenciación de alto rendimiento (HTS) pueden ser analizados a partir de conteos absolutos o normalizados.
+
+-   Si el propósito es hacer estadística descriptiva se puede usar una representación u otra (no siempre coinciden).
+
+-   Si el propósito es hacer inferencia estadística, se debe usar CODA (Compositional Data Analysis).
+
+### Objetivos del seminario 🎯
+
+*1.- Discutiremos las diferencias entre trabajar con conteos absolutos y conteos normalizados.*
+
+*2.- Indicaremos los principios de CODA*
+
+*3.- Mostraremos los reemplazos composicionales para las técnicas del `tool kit` de análisis de datos de microbioma.*
+
+*4.- `CODA en acción`: ejemplo de datos de la microbiota humana.*
+
+## 1. Diferencias entre trabajar con conteos absolutos y conteos normalizados 🤯
+
+En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
+
+-   <font color="red"> El número de lecturas **no** representa la abundancia total o absoluta en el ecosistema</font>.
+
+-   [Una muestra HTS tiene un tamaño fijo]{.highlight} que viene fijado por la capacidad del aparato utilizado.
+
+<center>![](images/poblacion.PNG)</center>
+
+<br>
+
+-   Podemos ver la diferencia entre conteos y proporciones comparando los datos de tres muestras en el gráfico que se presenta a continuación.
+
+<center>![](images/abundancias_relativas.PNG)</center>
+
+<br>
+
+-   Los diagramas de barras muestran la diferencia entre el conteo de moléculas y la proporción de moléculas para dos características, A y B en tres muestras.
+
+-   Las muestras 2 y 3 tienen las mismas abundancias proporcionales, aunque tengan **conteos absolutos diferentes**.
+
+-   En la tabla podemos observar que <font color="red">la relación entre la abundancia absoluta y la abundancia relativa cambia de manera significativa </font>.
+
+<br>
+
+### <font color="blue">Las sumas totales de las filas es un confundidor </font> 😵
+
+<br>
+
+-   Si normalizamos, de manera de que las sumas totales de las filas no importa, entonces las matrices de distancias usuales entre muestras, cambian.
+
+**Ejemplo**:
+
+```{r}
+set.seed(5)
+x= round( rnorm (3 ,100 ,10) )
+y= round( rnorm (3 ,100 ,10) )
+z= round( rnorm (3 ,1000 ,100) )
+X= cbind(x,y,z) 
+X  #Conteos absolutos
+ecodist::bcdist(X) # Matriz de distancia de Bray-Curtis conteos absolutos
+
+X1=apply(X, 1, function (x) x/sum(x)) 
+X1 #Conteos normalizados
+ecodist::bcdist(X1) # Matriz de distancia de Bray-Curtis conteos normalizados
+```
+
+<br>
+
+-   <font color="blue">Algunas soluciones:
+
+    -   Subsampling, pero se pierde precisión.
+
+    -   Usar solo proporciones, pero se añaden correlaciones espurias </font>
+
+<br>
+
+-   [Correlación espuria]{.highlight} (Pearson 1896).
+
+Dos o más OTUs estarán correlacionados simplemente porque los datos han sido transformados a una suma constante.
+
+<center>![](images/espuria.PNG)</center>
+
+<br>
+
+-   [Incoherencia subcomposicional]{.highlight}
+
+<center>![](images/subcomposicion.PNG)</center>
+
+<br>
+
+-   Si el tamaño de la muestra es constante, los conteos de los microorganismos no son variables independientes.
+
+<center>![](images/nature.PNG)</center>
+
+<center>![](images/FP.PNG)</center>
+
+### Solución:
+
+::: box
+<p class="text-danger">
+
+<font color="red">Los datos que se describen de forma natural como proporciones o probabilidades, o con una suma constante o irrelevante, se denominan datos composicionales.
+
+**Los datos de composición contienen información sobre las relaciones entre las partes.** </font>
+
+</p>
+:::
+
+<br>
+
+<center>![](images/frontiers.PNG)</center>
+
+<br>
+
+## 2. Principios básicos del CODA
+
+<center>![](images/coda_1.PNG)</center>
+
+<br>
+
+[Estas transformaciones producen los mismos resultados si los conteos son absolutos o proporciones]{.highlight}.
+
+<center>![](images/coda2.PNG)</center>
+
+<br>
+
+<center>![](images/coda3.PNG)</center>
+
+<br>
+
+<font color="blue"> Los cocientes logarítmicos tienen la propiedad de que su espacio muestral son números reales, una gran ventaja para la aplicación de los métodos estadísticos estándar desarrollados para variables aleatorias reales.</font>
+
+A menudo se utiliza la transformación log-ratio centrada (clr) introducida Aitchison (1986).
+
+<center>![](images/clr.PNG)</center>
+
+-   Los valores son invariantes con respecto a la escala; es decir, se espera obtener la misma proporción en una muestra con pocos recuentos de lecturas o en una muestra idéntica con muchos recuentos de lecturas, solo se ve afectada la precisión de la estimación de clr. <font color="red"> La normalización de los conteos es innecesaria</font>.
+
+-   Los valores transformados clr pueden utilizarse como entradas para pruebas de hipótesis multivariantes mediante herramientas como MANOVA, regresión, etc.
+
+![](images/ceros.PNG){width="45%"}
+
+-   La media (geométrica) no puede determinarse para datos dispersos sin eliminar, sustituir o estimar los valores de recuento 0.
+
+-   Existen diversos métodos para tratar los valores de recuento tanto estimaciones puntuales utilizando el paquete `zCompositions` de R, como una distribución de probabilidad utilizando `ALDEx2` disponible en Bioconductor.
+
+## 3. Reemplazos composicionales del `tool kit` tradicional 👀
+
+<br>
+
+<center>![](images/tecnicas_AD.PNG)</center>
+
+<br>
+
+**Distancia de Aitchison**
+
+-   La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de transformación clr.
+
+<center>![](images/dA.PNG)</center>
+
+<br>
+
+**Correlaciones de datos composicionales**
+
+Existen varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices "sparce". Uno de ellos es:
+
+-   [SparCC]{.highlight} En lugar de calcular todas las correlaciones posibles, utiliza la técnica de "shrinkage" para estimar solo las correlaciones más fuertes y confiables. Esto permite lidiar con matrices de datos de alta dimensionalidad.
+
+### <font color="red"> Metodología </font>
+
+::: box
+<center>![](images/proceso.PNG)</center>
+:::
+
+## 4. CODA en acción 😎
+
+<br>
+
+<center>![](https://www.taiwisdom.org/artclnchdev/copy_of_timeout.gif){width="60%"}</center>
