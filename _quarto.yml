@@ -9,9 +9,7 @@ book:
   
   chapters:
     - index.qmd
-    - tema1.qmd
-    - tema2.qmd
-    - tema3.qmd
+    - coda_7_6_203.qmd
 
 bibliography: references.bib
 

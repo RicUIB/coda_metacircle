@@ -10,9 +10,7 @@ toc: true
 
 ## Introducción 👋
 
--   Los conjuntos de datos recogidos mediante secuenciación de alto rendimiento (HTS) pueden ser analizados a partir de conteos absolutos o normalizados.
-
--   Si el propósito es hacer estadística descriptiva se puede usar una representación u otra (no siempre coinciden).
+-   Los conjuntos de datos recogidos mediante secuenciación de alto rendimiento (HTS) pueden ser analizados a partir de conteos absolutos o normalizados, si el propósito es hacer estadística descriptiva (no siempre coinciden).
 
 -   Si el propósito es hacer inferencia estadística, se debe usar CODA (Compositional Data Analysis).
 
