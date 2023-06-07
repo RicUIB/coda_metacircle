@@ -1,0 +1,442 @@
+# Ejemplo CODA
+
+## Librerías
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+   fig.width=8, 
+  out.width="75%",
+  fig.asp = 1,
+  fig.align="center",
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  cache=TRUE
+)
+```
+
+
+```{r}
+set.seed(1)
+library(data.table)
+library(compositions) 
+library(zCompositions) 
+library(ALDEx2) 
+library(kableExtra)
+library(ggplot2)
+library(easyCODA)
+library(RColorBrewer)
+library(robCompositions)
+library(dendextend)
+library(coda4microbiome)
+library(propr)
+library(ppclust)
+library(factoextra)
+library(cluster)
+library(fclust)
+library(nnet)
+library(corrplot)
+source("funcionsCODACesc.R")
+```
+
+
+
+## Carga y limpieza de los datos
+
+```{r}
+DF.0=as.data.frame(fread("count_table_otus.tsv"))
+rownames(DF.0)=DF.0[,1]
+DF.0=DF.0[,-1]
+# Eliminando los _
+rownames(DF.0)=gsub("_",".", rownames(DF.0))
+colnames(DF.0)=gsub("_",".", colnames(DF.0))
+
+# Las filas deben ser muestras y las columnas taxa 
+DF.0=t(DF.0)
+dim(DF.0)
+# [1] 218 280
+# Eliminamos las filas y columnas con 0
+DF.0=DF.0[apply(DF.0, 1, sum)>0,apply(DF.0, 2, sum)>0]
+mostres=rownames(DF.0)
+bitxos=colnames(DF.0)
+colnames(DF.0)=1:dim(DF.0)[2]
+Grups=as.factor(substr(mostres,1,1)) 
+Grups
+colors=c("green","blue","brown")[Grups] 
+```
+
+# Tratamiento de los ceros
+
+```{r}
+#Proporciones de ceros por muestras
+Zeros.row=apply(DF.0,MARGIN=1,FUN=function(x){length(x[x==0])/length(x)}) 
+
+#Proporciones de ceros por taxa
+Zeros.col=apply(DF.0,MARGIN=2,FUN=function(x){length(x[x==0])/length(x)}) 
+
+hist(Zeros.row,breaks=20,freq=FALSE,xlim=c(0.5,0.9),xlab="No. of 0's", main="Proportions of 0's in samples")
+
+hist(Zeros.col,breaks=20,freq=FALSE,xlab="No. of 0's", main="Proportions of 0 at taxa")
+```
+
+```{r,fig.cap="Zero Patterns in global sample"}
+# zPatterns de la librería zCompositions
+zPatterns(DF.0,label=0,suppress.print=TRUE,main="Global")
+```
+
+```{r,fig.cap="Zero Patterns in Adults samples"}
+zPatterns(DF.0[Grups=="A",],label=0,suppress.print=TRUE,main="Global")
+```
+
+```{r,fig.cap="Zero Patterns in Ederly samples"}
+zPatterns(DF.0[Grups=="E",],label=0,suppress.print=TRUE,main="Global")
+```
+
+```{r,fig.cap="Zero Patterns in Infants samples"}
+zPatterns(DF.0[Grups=="I",],label=0,suppress.print=TRUE,main="Global")
+```
+
+### Géneros que aparecen únicamente en un tipo de muestra
+
+-   Solo en Adultos
+
+```{r}
+bitxos.nomesA=bitxos[which(apply(DF.0[Grups!="A",], 2, sum)==0)]
+length(bitxos.nomesA)
+bitxos.nomesA%>%
+  kbl() %>%
+  kable_styling()
+```
+
+-   Solo en los Ancianos (Elderly)
+
+```{r}
+bitxos.nomesE=bitxos[which(apply(DF.0[Grups!="E",], 2, sum)==0)]
+length(bitxos.nomesE)
+bitxos.nomesE%>%
+  kbl() %>%
+  kable_styling()
+```
+
+-   Solo en los Infantes
+
+```{r}
+bitxos.nomésI=bitxos[which(apply(DF.0[Grups!="I",], 2, sum)==0)]
+length(bitxos.nomésI)
+bitxos.nomésI%>%
+  kbl() %>%
+  kable_styling()
+```
+
+-   Solo en uno
+
+```{r}
+Nomes.a.un=which(apply(DF.0[Grups!="A",], 2, sum)==0 | apply(DF.0[Grups!="E",], 2, sum)==0 | apply(DF.0[Grups!="I",], 2, sum)==0)
+```
+
+## Imputación de ceros con la previa de Jeffreys
+
+```{r,warning=FALSE}
+#cmultRepl de la librería zCompositions Bayesian-Multiplicative replacement of count zeros
+# previa de Jeffreys 1/2, todos los valores tienen la misma probabilidad de ocurrir.
+
+DF.J=cmultRepl(DF.0, method="user", t=matrix(1/dim(DF.0)[2],nrow=dim(DF.0)[1],ncol=dim(DF.0)[2]),s=rep(dim(DF.0)[2]/2,dim(DF.0)[1]),
+               output="p-counts",suppress.print=TRUE)
+```
+
+## Imputación de ceros con Geometric Bayesian multiplicative
+
+```{r}
+# Este es el método por defecto de cmultRepl 
+# Hay que quitar columnas con solo una entrada diferente a 0
+Unics=which(apply(DF.0, 2, function(x){length(which(x>0))})==1)
+bitxos.unics=bitxos[Unics]
+length(bitxos.unics)
+bitxos.unics%>%
+  kbl() %>%
+  kable_styling()
+```
+
+Damos un vistazo a lo que nos perderemos si las quitamos: Sus frecuencias relativas dentro de sus muestras únicas
+
+```{r}
+Què.ens.perdem=rep(0,length(Unics))
+for (i in 1:length(Unics)){
+  y=attr(Unics,"names")[i]
+  x=which(DF.0[,y]>0)
+  Què.ens.perdem[i]=DF.0[x,y]/sum(DF.0[x,])
+}
+round(Què.ens.perdem,6)
+```
+
+La matriz con los ceros imputados ...
+
+```{r}
+DF.0U=DF.0[,-Unics]
+DF.GBM=cmultRepl(DF.0U,method="GBM",output="p-counts",suppress.print=TRUE)
+bitxos.nounics=bitxos[-Unics]
+```
+
+## Imputación de ceros con un método Iterativo
+
+```{r,eval=FALSE}
+#impRZilr de la librería robCompositions
+
+# Tarda mucho en compilar
+# DF.0n=as.data.frame(DF.0)
+# DF.0n=as.data.frame(apply(DF.0n,MARGIN=2,as.numeric))
+# DF.It=impRZilr(DF.0n, eps=0.05, method = "pls", dl=rep(1, dim(DF.0)[2]),maxit = 10,verbose = FALSE)
+# saveRDS(DF.It, file="DFItnou.RData")
+```
+
+```{r}
+#DF.It=readRDS("DFItnou.RData")$x
+```
+
+### ¿Cuál método para imputar los ceros es mejor?
+
+(Lubbe-Filznoser-Templ Chemolab 2021)
+
+Comparando matrices de correlaciones de Kynclova-Hron-Filzmoser: un valor pequeño indica que el método es mejor.
+
+La función `corCoDa` del paquete `robCompositions` que las calcula no aguanta matrices grandes (al menos en el ordenador de Cesc), por lo tanto lo ha hecho por muestreo.
+
+```{r,warning=FALSE}
+# Sustitución de los ceros por algo muy pequeño
+# multRepl de la librería zCompositions
+DF.0.alt=multRepl(DF.0,dl=rep(1, ncol(DF.0)),frac=10^(-12),label=0)
+DF.0.alt.U=DF.0.alt[,-Unics]
+```
+
+```{r,eval=FALSE}
+# X Y con las mismas dimensiones
+# m < 30 o  da NaN
+# tarda mucho tiempo según Cesc pero a mi no
+f=function(X,Y,m){
+x=sample(dim(X)[2],m)
+(1/m)^2*sum((corCoDa(X[,x])-corCoDa(Y[,x]))^2)
+}
+mean(replicate(200,f(DF.0.alt,DF.J,25)))
+mean(replicate(200,f(DF.0.alt.U,DF.GBM,25)))
+mean(replicate(200,f(DF.0.alt,DF.It,25)))
+# [1] 0.01688433 0.01664001
+# [1] 0.009403911 0.009399878
+# [1] 0.06253841 0.05720421
+```
+
+### Comparando matrices de distancias de Aichinson: valor pequeño indica mejor.
+
+```{r}
+(1/dim(DF.0)[1])^2*sum((aDist(DF.0.alt)-aDist(DF.J))^2)
+(1/dim(DF.0U)[1])^2*sum((aDist(DF.0.alt.U)-aDist(DF.GBM))^2)
+#(1/dim(DF.0)[1])^2*sum((aDist(DF.0.alt)-aDist(DF.It))^2)
+```
+
+```{r}
+#Imputa0=c("J","GBM","It")
+Imputa0="GBM"
+if (Imputa0=="J"){
+    DF=DF.J
+}
+if (Imputa0=="GBM"){
+  DF.0=DF.0U
+  DF=DF.GBM
+  bitxos=bitxos.nounics
+  
+} 
+#if (Imputa0=="It"){
+    #DF=DF.It
+#}
+```
+
+### Si se quieren filtrar las muestras outliers
+
+Quitamos muestras que contribuyen a tener mucha varianza
+
+Utilizó codaSeq.outlier de funcionsCODACesc.R adaptada de EasyCODA, que le da error
+
+```{r}
+DF.CLR=acomp(DF)
+CSOut=codaSeq.outlier(DF.CLR, plot.me=TRUE)
+outliers=CSOut$bad
+bones=CSOut$good
+```
+
+Las muestras outliers son
+
+```{r}
+mostres[outliers]
+```
+
+Si quitamos estas muestras, tenemos que volver a controlar que no nos quede ninguna columna de 0s
+
+```{r}
+DF.0B=DF.0[bones,]
+conserv=which(apply(DF.0B, 2, sum)>0) 
+DF.0B=DF.0B[ ,conserv]
+```
+
+```{r,eval=FALSE}
+# si se emplea DF.It, igual conviene re-calcularlo porque depende de las muestras
+
+# Hay que quitar bichos que hayan quedado a 0 en todo
+conserv=which(apply(DF.0B, 2, sum)>0) 
+DF.0B=DF.0B[ ,conserv]
+DF.0Bn=as.data.frame(DF.0B)
+DF.0Bn=as.data.frame(apply(DF.0Bn,MARGIN=2,as.numeric))
+DFB.It=impRZilr(DF.0Bn, eps=0.05, method = "pls", dl=rep(1, dim(DF.0B)[2]),maxit = 10,verbose = FALSE)
+saveRDS(DFB.It, file="DFItBnou.RData")
+```
+
+Con la función `QuinesMostres` indicamos si cogemos solo las muestras buenas o todas
+
+```{r}
+#QuinesMostres=c("totes","bones") 
+QuinesMostres="bones"
+if (QuinesMostres=="bones"){
+  DF.0=DF.0B
+  DF=DF[bones,conserv]
+  Grups=Grups[bones]
+colors=colors[bones]
+mostres=mostres[bones]
+    bitxos=bitxos[conserv]
+}
+DF.CLR=acomp(DF)
+DF.prop=t(apply(DF, 1, function(x){x/sum(x)}))
+```
+
+## Sin filtrar variables
+
+No hace biplot porque con tanta variable no se ve nada
+
+## Clustering jerárquico
+
+```{r}
+# Clustering jerárquico con distancias euclidianas con pesos
+# Función WARD de EasyCODA, necesita que la matriz de clr's se calcule con la misma librería
+DF.CLR.W=CLR(DF)
+hc=WARD(DF.CLR.W,weight=TRUE)
+dend=as.dendrogram(hc)
+labels_colors(dend)=colors[hc$order]
+par(cex=0.75)
+plot(dend, main = "")
+par(cex=1)
+# No dibuja barplot de composiciones porque no se ve nada
+```
+
+```{r}
+clust1=data.frame(Orig=Grups[hc$order],
+             clust=cutree(dend, k = 3)[order.dendrogram(dend)])
+table(clust1)%>%
+  kbl() %>%
+  kable_styling()
+```
+
+## ALDEx
+
+ALDEx2 estima la variación por edad (A, E, I) dentro de cada muestra utilizando el método de Monte Carlo, las muestras se extraen de la distribución Dirichlet (la beta en el caso multivariado). El muestreo a partir de esta distribución devuelve la distribución de probabilidad posterior de los datos observados bajo un modelo de muestreo repetido. Todas las salidas de ALDEx2 son salidas de las distribuciones posteriores, ya sean valores esperados o intervalos de confianza.
+
+```{r}
+DF0.Aldex=rbind(DF.0[Grups=="A",],DF.0[Grups=="E",], DF.0[Grups=="I",])
+DF0.t=data.frame(t(DF0.Aldex))
+conds=c(rep("A", dim(DF.0[Grups=="A",])[1]),rep("E", dim(DF.0[Grups=="E",])[1]), rep("I", dim(DF.0[Grups=="I",])[1]))
+#'
+x.clr.kw=aldex.clr(DF0.t[,1:5], conds=conds[1:5], mc.samples=10, verbose=FALSE)
+mc.instances <- numMCInstances(x.clr.kw)
+mc.all <- getMonteCarloInstances(x.clr.kw)
+```
+
+```{r,eval=FALSE}
+DF0.Aldex=rbind(DF.0[Grups=="A",],DF.0[Grups=="E",], DF.0[Grups=="I",])
+DF0.t=data.frame(t(DF0.Aldex))
+conds=c(rep("A", dim(DF.0[Grups=="A",])[1]),rep("E", dim(DF.0[Grups=="E",])[1]), rep("I", dim(DF.0[Grups=="I",])[1]))
+#
+x.clr.kw=aldex.clr(DF0.t, conds=conds, mc.samples=1000, verbose=FALSE)
+x.kw=aldex.kw(x.clr.kw, verbose=FALSE)
+# valores esperados del test Kruskal-Wallis y un glm sobre los datos
+mm=model.matrix(~conds,data.frame(conds))
+x.clr.glm=aldex.clr(DF0.t, conds=mm, mc.samples=1000, verbose=FALSE)
+x.glm=aldex.glm(x.clr.glm, mm)
+#
+x.tot=cbind(bitxos,x.kw,x.glm) 
+saveRDS(x.tot, file="xtotTotal.RData")
+```
+
+```{r}
+x.tot=readRDS("xtotTotal.RData")
+#'
+head(x.tot)%>%
+  kbl() %>%
+  kable_styling()
+```
+
+Aquí podemos basarnos en * kw.eBH * glm.eBH * model.condsE Pr(>|t|).BH * model.condsI Pr(>|t|).BH
+
+El model.conds glm da poca cosa:
+
+```{r}
+# A mi no me hace el plot, problemas con xlim
+
+# plot(x.tot$`model.condsE Pr(>|t|).BH`,x.tot$`model.condsI Pr(>|t|).BH`,pch=20,cex=0.8)
+```
+
+```{r}
+prova=intersect(which(x.tot$`model.condsE Pr(>|t|)` < 0.1),which(x.tot$`model.condsI Pr(>|t|)` < 0.1))
+length(prova)
+```
+
+```{r}
+signif.p1=which(x.tot$kw.eBH < 0.01)
+signif.g1=which(x.tot$glm.eBH < 0.01)
+signif.p1=intersect(signif.p1,signif.g1)
+
+length(signif.p1)
+x.tot.sign=x.tot[signif.p1,c(3,5,19,20)]
+names(x.tot.sign)=c("p-val KW corregit", "p-val glm corregit", "p-val E vs A corregit", "p-val I vs A corregit")
+rownames(x.tot.sign)=bitxos[signif.p1]
+
+x.tot.sign%>%
+  kbl() %>%
+  kable_styling()
+```
+
+Si nos restringimos a estos bichos:
+
+```{r}
+DF.s=DF[,prova]
+DF.CLR=acomp(DF.s) # Hasta aquí me funciona problema con los subíndices
+```
+
+```{r}
+#pcx=princomp(DF.CLR,cor=TRUE)   No lo puedo hacer
+```
+
+```{r}
+# coloredBiplot(pcx, cex=0.5, col="red",  arrow.len=0, scale=1,var.axes=TRUE,
+#     xlab=paste("PC1", round(pcx$sdev[1]^2 / sum(pcx$sdev^2),3), sep=": "),
+#     ylab=paste("PC2", round(pcx$sdev[2]^2 / sum(pcx$sdev^2),3), sep=": "),
+#     xlabs.col=colors, main="Form biplot")
+
+```
+
+```{r}
+# DF.CLR.W.s=CLR(DF.s)
+# hc2=WARD(DF.CLR.W.s,weight=TRUE)
+# dend.2=as.dendrogram(hc2)
+# labels_colors(dend.2)=colors[hc2$order]
+# DFOr=DF.s[hc2$order,]
+# #' Reorden les mostres per dibuixar els barplot en el mateix ordre
+# DFOr.CLR=acomp(DFOr)
+# d.names=colnames(DF.s)[order(apply(DF.s, 2, sum), decreasing=T) ]
+# nb.cols=dim(DF.s)[2]
+# colors.OTU=colorRampPalette(brewer.pal(length(d.names),"Spectral"))(nb.cols)
+# #' Dibuix
+# layout(matrix(c(1,3,2,3),2,2, byrow=T), widths=c(6,2), height=c(4,4))
+# par(mar=c(2,1,1,1)+0.1,cex=0.75)
+# plot(dend.2, main = "")
+# barplot(DFOr.CLR, legend.text=F, col=colors.OTU, axisnames=F, border=NA, xpd=T,)
+# par(mar=c(0,1,1,1)+0.1,cex=1)
+# plot(1,2, pch = 1, lty = 1, ylim=c(-20,20), type = "n", axes = FALSE, ann = FALSE)
+# legend(x="center", legend=d.names, col=colors.OTU, lwd=5, cex=.6, border=NULL)
+```

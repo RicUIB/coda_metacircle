@@ -12,7 +12,7 @@ book:
     - t1.qmd
     - t2.qmd
     - t3.qmd
-    - t4.qmd
+    - coda_ejemplo1.qmd
     
 bibliography: references.bib
 
