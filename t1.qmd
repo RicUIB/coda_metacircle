@@ -1,0 +1,93 @@
+# Inconvenientes de trabajar con conteos absolutos y conteos normalizados 🤯
+
+En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
+
+-   <font color="red"> El número de lecturas **no** representa la abundancia total o absoluta en el ecosistema</font>.
+
+-   [Una muestra HTS tiene un tamaño fijo]{.highlight} que viene fijado por la capacidad del aparato utilizado.
+
+<center>![](images/poblacion.PNG)</center>
+
+- <font color="red">No podemos comparar muestras con conteos absolutos.</font>
+
+-   Podemos ver la diferencia entre conteos y proporciones comparando los datos de tres muestras en el gráfico que se presenta a continuación.
+
+<center>![](images/abundancias_relativas.PNG)</center>
+
+
+-   Los diagramas de barras muestran la diferencia entre el conteo de moléculas y la proporción de moléculas para dos características, A y B en tres muestras.
+
+-   Las muestras 2 y 3 tienen las mismas abundancias proporcionales, aunque tengan **conteos absolutos diferentes**.
+
+-   En la tabla podemos observar que <font color="red">la relación entre la abundancia absoluta y la abundancia relativa cambia de manera significativa </font>.
+
+
+## <font color="blue"> Inconvenientes de compararar muestras con abundancias relativas </font> 😵
+
+
+-   Si normalizamos, de manera de que las sumas totales de las filas no importa, entonces las matrices de distancias usuales entre muestras, cambian.
+
+**Ejemplo**
+
+```{r}
+set.seed(5)
+library(ecodist)
+x= round( rnorm (3 ,100 ,10) )
+y= round( rnorm (3 ,100 ,10) )
+z= round( rnorm (3 ,1000 ,100) )
+X= cbind(x,y,z)
+knitr::kable(X) #Conteos absolutos
+knitr::kable(as.matrix(bcdist(X),ncol=2)) # Matriz de distancia de Bray-Curtis conteos absolutos
+
+X1=apply(X, 1, function (x) x/sum(x)) 
+knitr::kable(X1) #Conteos normalizados
+knitr::kable(as.matrix(bcdist(X1),ncol=2)) # Matriz de distancia de Bray-Curtis conteos normalizados
+```
+
+<br>
+
+-   <font color="blue">Algunas soluciones:
+
+    -   Subsampling, pero se pierde precisión.
+
+    -   Usar solo proporciones, pero se añaden correlaciones espurias </font>
+
+<br>
+
+-   [Correlación espuria]{.highlight} (Pearson 1896).
+
+Dos o más OTUs estarán correlacionados simplemente porque los datos han sido transformados a una suma constante.
+
+<center>![](images/espuria.PNG)</center>
+
+<br>
+
+-   [Incoherencia subcomposicional]{.highlight}
+
+<center>![](images/subcomposicion.PNG)</center>
+
+<br>
+
+-   <font color="red"> Si hemos normalizado, los conteos de los microorganismos no son variables independientes ya que están ligados por el valor de la suma.</font>
+
+<center>![](images/nature.PNG)</center>
+
+<center>![](images/FP.PNG)</center>
+
+## Solución
+
+::: box
+<p class="text-danger">
+
+<font color="red"> Utilizamos otra forma de "normalizar" que preserva la composición de cada muestra y nos permite compararlas: 
+<center>
+</font>**CODA= Compositional Data Analysis**
+</center>
+</p>
+:::
+ 
+
+
+<center>![](images/frontiers.PNG)</center>
+
+<br>

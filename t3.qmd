@@ -1,0 +1,20 @@
+# Reemplazos composicionales del `tool kit` tradicional 👀
+
+
+<br>
+
+<center>![](images/tabla_1.PNG)</center>
+
+<br>
+
+**Distancia de Aitchison**
+
+-   La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de transformación clr.
+
+<center>![](images/dA.PNG)</center>
+
+<br>
+
+**Correlaciones de datos composicionales**
+
+Existen varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices "sparce". Uno de ellos es `r-sparc`.

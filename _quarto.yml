@@ -9,8 +9,11 @@ book:
   
   chapters:
     - index.qmd
-    - coda_7_6_203.qmd
-
+    - t1.qmd
+    - t2.qmd
+    - t3.qmd
+    - t4.qmd
+    
 bibliography: references.bib
 
 format:

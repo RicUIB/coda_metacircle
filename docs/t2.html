@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CODA para estudios del microbioma Seminario para protecto METACIRCLE XXXX - 3&nbsp; Principios básicos del CODA</title>
+<title>CODA para estudios del microbioma Seminario del proyecto METACIRCLE - 2&nbsp; Principios básicos del CODA</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./tema2.html" rel="prev">
+<link href="./t3.html" rel="next">
+<link href="./t1.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -60,6 +61,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -69,7 +71,7 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -82,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">CODA para estudios del microbioma Seminario para protecto METACIRCLE XXXX</a> 
+      <a href="./">CODA para estudios del microbioma Seminario del proyecto METACIRCLE</a> 
     </div>
       </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
@@ -99,17 +101,22 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tema1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Los datos de secuenciación son composicionales 🤯</span></a>
+  <a href="./t1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Inconvenientes de trabajar con conteos absolutos y conteos normalizados 🤯</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tema2.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Los datos de secuenciación son composicionales 🤯</span></a>
+  <a href="./t2.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tema3.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></a>
+  <a href="./t3.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reemplazos composicionales del <code>tool kit</code> tradicional 👀</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./t4.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CODA en acción 😎</span></a>
   </div>
 </li>
     </ul>
@@ -121,8 +128,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#reemplazos-composicionales-del-tool-kit-tradicional" id="toc-reemplazos-composicionales-del-tool-kit-tradicional" class="nav-link active" data-scroll-target="#reemplazos-composicionales-del-tool-kit-tradicional"><span class="toc-section-number">3.1</span>  Reemplazos composicionales del <code>tool kit</code> tradicional 👀</a></li>
-  <li><a href="#coda-en-acción" id="toc-coda-en-acción" class="nav-link" data-scroll-target="#coda-en-acción"><span class="toc-section-number">3.2</span>  CODA en acción 😎</a></li>
+  <li><a href="#metodología" id="toc-metodología" class="nav-link active" data-scroll-target="#metodología"><span class="toc-section-number">2.1</span>  <font color="red"> Metodología </font></a></li>
   </ul>
 </nav>
     </div>
@@ -131,7 +137,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Principios básicos del CODA</span></h1>
 </div>
 
 
@@ -146,18 +152,38 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="reemplazos-composicionales-del-tool-kit-tradicional" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="reemplazos-composicionales-del-tool-kit-tradicional"><span class="header-section-number">3.1</span> Reemplazos composicionales del <code>tool kit</code> tradicional 👀</h2>
-<br>
+<ul>
+<li><p>Cada muestra se considera como un vector de datos composicionales <span class="math inline">\((x_1, \ldots, x_k)\)</span> con cada <span class="math inline">\(x_i \geq 0\)</span>.</p></li>
+<li><p>Consideramos que dos vectores son equivalentes cuando son proporcionales.</p></li>
+<li><p>El análisis de los datos se basa en las ratios <span class="math inline">\(x_i/x_j\)</span>.</p></li>
+<li><p>Las ratios se transforman mediante logaritmos para traducir comparación relativa en comparación absoluta (y para acercar las ratios a una normal).</p></li>
+</ul>
+<p><span class="highlight">Estas transformaciones producen los mismos resultados si los conteos son absolutos o proporciones</span>.</p>
 <center>
-<img src="images/tecnicas_AD.PNG" class="img-fluid">
+<img src="images/coda2.PNG" class="img-fluid">
 </center>
 <p><br></p>
-</section>
-<section id="coda-en-acción" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="coda-en-acción"><span class="header-section-number">3.2</span> CODA en acción 😎</h2>
-<!-- Hasta aquí -->
-<p>You can also <span class="strike">strike through</span>, <span class="cross">cross-off</span>, <span class="highlight">highlight</span>, and <span class="circle">circle</span> text</p>
+<center>
+<img src="images/coda3.PNG" class="img-fluid">
+</center>
+<p><br></p>
+<p><font color="blue"> Los cocientes logarítmicos son números reales, una gran ventaja para la aplicación de los métodos estadísticos estándar desarrollados para variables aleatorias continuas.</font></p>
+<p>A menudo se utiliza la transformación log-ratio centrada (clr) introducida Aitchison (1986).</p>
+<p>Dado un vector <span class="math inline">\(\mathbf{x}\)</span> de conteos de OTUs, <span class="math inline">\(\mathbf{x}=(x_1, \ldots,x_D)\)</span>, su transformación <strong>clr</strong> es:</p>
+<p><span class="math display">\[\mathbf{x}_{clr}= \left( \log(x_1/g(\mathbf{x})),\ldots, \log(x_D/g(\mathbf{x}))\right),\]</span></p>
+<p>donde <span class="math inline">\(g(\mathbf{x})\)</span> es la media geométrica de <span class="math inline">\(\mathbf{x}\)</span>, es decir, <span class="math inline">\(g(\mathbf{x})=\sqrt[D]{x_1 \cdot x_2 \cdots x_D}\)</span>.</p>
+<p><strong>Tratamiento de los ceros:</strong></p>
+<ul>
+<li><p>Si alguna variable es cero, no se pueden calcular las ratios.</p></li>
+<li><p>Imputación de ceros: <code>zCompositions</code> de R, como una distribución de probabilidad utilizando <code>ALDEx2</code> disponible en Bioconductor.</p></li>
+</ul>
+<section id="metodología" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="metodología"><span class="header-section-number">2.1</span> <font color="red"> Metodología </font></h2>
+<div class="box">
+<center>
+<img src="images/proceso.PNG" class="img-fluid">
+</center>
+</div>
 
 
 </section>
@@ -298,11 +324,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./tema2.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Los datos de secuenciación son composicionales 🤯</span></span>
+      <a href="./t1.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Inconvenientes de trabajar con conteos absolutos y conteos normalizados 🤯</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./t3.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reemplazos composicionales del <code>tool kit</code> tradicional 👀</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
