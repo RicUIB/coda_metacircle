@@ -1,8 +1,8 @@
 # Introducción 👋 {.unnumbered}
 
-- Los estudios sobre el microbioma humano se enmarcan en el ámbito de los datos de composición, ya que <font color="blue"> las abundancias absolutas de microorganismos no pueden obtenerse a partir de los datos de secuenciación</font>.
+-   Los conjuntos de datos recogidos mediante secuenciación de alto rendimiento (HTS) pueden ser analizados a partir de conteos absolutos o normalizados, si el propósito es hacer estadística descriptiva (no siempre coinciden).
 
-- Cada muestra consiste en proporciones de varios microrganismos con una suma limitada a una constante. Esta simple característica hace que <font color="blue"> los tratamientos estadísticos tradicionales lleven a resultados erróneos y correlaciones espurias</font>.
+-   Si el propósito es hacer inferencia estadística, se debe usar CODA (Compositional Data Analysis).
 
 ## Objetivos del seminario 🎯
 
