@@ -61,6 +61,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -115,7 +116,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./coda_ejemplo1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CODA en acción 😎: Ejemplo 1 (A,E,I)</span></a>
+  <a href="./coda_ejemplo1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CODA en acción 😎:</span></a>
   </div>
 </li>
     </ul>
@@ -152,10 +153,17 @@ ul.task-list li input[type="checkbox"] {
 <p><br></p>
 <p><strong>Distancia de Aitchison</strong></p>
 <ul>
-<li>La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de transformación clr.</li>
+<li>La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de la transformación clr. Específicamente:</li>
 </ul>
+<p><span class="math display">\[d(x_i,x_j) = \sqrt{ \sum_{k=1}^{D} \left( log \frac{x_{ik}}{g(\mathbf{x}_i)} - log \frac{x_{jk}}{g(\mathbf{x}_j)} \right)^2}
+\]</span></p>
+<ul>
+<li>La distancia Euclídea: <span class="math display">\[d(y_i,y_j) = \sqrt{ \sum_{k=1}^{N} \left( y_{ik} - y_{jk} \right)^2}
+\]</span></li>
+</ul>
+<p>Ejemplo de distancia euclídea:</p>
 <center>
-<img src="images/dA.PNG" class="img-fluid">
+<img src="images/dist_eucli.PNG" class="img-fluid">
 </center>
 <p><br></p>
 <p><strong>Correlaciones de datos composicionales</strong></p>
@@ -305,7 +313,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./coda_ejemplo1.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CODA en acción 😎: Ejemplo 1 (A,E,I)</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CODA en acción 😎:</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

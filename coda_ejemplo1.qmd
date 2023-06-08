@@ -1,7 +1,16 @@
-# CODA en acción 😎: Ejemplo 1 (A,E,I)
+# CODA en acción 😎: 
+
+Se obtuvieron muestras fecales, en diferentes momentos, de individuos sanos distribuidos en tres grupos de edad: infantes (I), adultos (A) y ancianos (E). La metagenómica se llevó para 218 muestras que superaron los controles de calidad.
+
+Queremos responder las siguientes preguntas:
+
+* ¿Las abundancias de qué bichos marcan la diferencia entre dos o más tipos de muestra?
+
+* ¿En qué pares de bichos cambia significativamente la diferencia
+entre sus proporciones entres dos tipos de muestras?
 
 
-## Carga de librerías
+## Carga de librerías de R que utilizaremos
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -16,7 +25,6 @@ knitr::opts_chunk$set(
   cache=TRUE
 )
 ```
-
 
 ```{r}
 set.seed(1)
@@ -41,8 +49,6 @@ library(corrplot)
 source("funcionsCODACesc.R")
 ```
 
-
-
 ## Carga y limpieza de los datos
 
 ```{r}
@@ -66,7 +72,7 @@ Grups=as.factor(substr(mostres,1,1))
 colors=c("green","blue","brown")[Grups] 
 ```
 
-# Tratamiento de los ceros
+## Tratamiento de los ceros
 
 ```{r}
 #Proporciones de ceros por muestras
@@ -137,6 +143,10 @@ Nomes.a.un=which(apply(DF.0[Grups!="A",], 2, sum)==0 | apply(DF.0[Grups!="E",], 
 
 ## Imputación de ceros con la previa de Jeffreys
 
+Se asume que los valores no cero siguen una distribución log-normal pero están truncados en cero. Los ceros están presentes debido a un valor subyacente que se encuentra por debajo del umbral de detección. En este caso se ha puesto una previa no informativa. Los parámetros de estiman via MCMC.
+
+Los ceros se reemplazan con los valores de la distribución predictiva posterior.
+
 ```{r,warning=FALSE}
 #cmultRepl de la librería zCompositions Bayesian-Multiplicative replacement of count zeros
 # previa de Jeffreys 1/2, todos los valores tienen la misma probabilidad de ocurrir.
@@ -146,6 +156,11 @@ DF.J=cmultRepl(DF.0, method="user", t=matrix(1/dim(DF.0)[2],nrow=dim(DF.0)[1],nc
 ```
 
 ## Imputación de ceros con Geometric Bayesian multiplicative
+
+Se asume que los valores observados no cero siguen una distribución geométrica (modeliza la probabilidad de que ocurra el primer éxito en una serie de ensayos independientes de Bernoulli, donde un éxito es la observación de un valor no cero). Por lo tanto, los ceros se consideran "fracasos" en esta distribución.
+
+Se estima el parámetro de la distribución geométrica a partir de los valores observados no cero en el conjunto de datos.
+Se utiliza una distribución previa para el parámetro de la distribución geométrica. Se obtiene la distribución posterior del parámetro con la que se generan valores imputados para los ceros. 
 
 ```{r}
 # Este es el método por defecto de cmultRepl 
@@ -180,10 +195,12 @@ bitxos.nounics=bitxos[-Unics]
 
 ## Imputación de ceros con un método Iterativo
 
+El método EM se basa en la idea de maximizar una función de verosimilitud incompleta, donde se asume que los datos faltantes son valores no observados o "datos ocultos".
+
 ```{r,eval=FALSE}
 # impRZilr de la librería robCompositions
 # 
-# Tarda mucho en compilar
+# Tarda mucho ... 
 # DF.0n=as.data.frame(DF.0)
 # DF.0n=as.data.frame(apply(DF.0n,MARGIN=2,as.numeric))
 # DF.It=impRZilr(DF.0n, eps=0.05, method = "pls", dl=rep(1, dim(DF.0)[2]),maxit = 10,verbose = FALSE)
@@ -200,7 +217,7 @@ DF.It=readRDS("DFItnou.RData")$x
 
 Comparando matrices de correlaciones de Kynclova-Hron-Filzmoser: un valor pequeño indica que el método es mejor.
 
-La función `corCoDa` del paquete `robCompositions` que las calcula no aguanta matrices grandes (al menos en el ordenador de Cesc), por lo tanto lo ha hecho por muestreo.
+La función `corCoDa` del paquete `robCompositions` que las calcula no aguanta matrices grandes (al menos en el portátil), por lo tanto lo hacemos por muestreo.
 
 ```{r,warning=FALSE}
 # Sustitución de los ceros por algo muy pequeño
@@ -229,7 +246,7 @@ mean(replicate(200,f(DF.0.alt,DF.It,25)))
 ```{r}
 (1/dim(DF.0)[1])^2*sum((aDist(DF.0.alt)-aDist(DF.J))^2)
 (1/dim(DF.0U)[1])^2*sum((aDist(DF.0.alt.U)-aDist(DF.GBM))^2)
-#(1/dim(DF.0)[1])^2*sum((aDist(DF.0.alt)-aDist(DF.It))^2)
+(1/dim(DF.0)[1])^2*sum((aDist(DF.0.alt)-aDist(DF.It))^2)
 ```
 
 ```{r}
@@ -253,6 +270,10 @@ if (Imputa0=="It"){
 Quitamos muestras que contribuyen a tener mucha varianza
 
 Utilizó codaSeq.outlier de funcionsCODACesc.R adaptada de EasyCODA, que le da error
+
+La función codaSeq.outlier ayuda a identificar observaciones que se desvían significativamente de la estructura típica de las composiciones.
+
+El algoritmo de detección de outliers implementado en codaSeq.outlier se basa en la suposición de que los datos de composición siguen una distribución log-ratio multivariada. 
 
 ```{r}
 DF.CLR=acomp(DF)
@@ -306,9 +327,13 @@ DF.prop=t(apply(DF, 1, function(x){x/sum(x)}))
 
 ## Sin filtrar variables
 
-No hace biplot porque con tanta variable no se ve nada
+No hacemos biplot porque con tanta variable no se ve nada
 
-## Clustering jerárquico
+### Clustering jerárquico
+
+A diferencia del algoritmo de Ward estándar (agrupa observaciones similares en función de una medida de distancia entre ellas), donde todas las observaciones tienen el mismo peso, el enfoque ponderado permite considerar la importancia relativa de cada observación en el proceso de agrupamiento.
+
+
 
 ```{r}
 # Clustering jerárquico con distancias euclidianas con pesos
@@ -323,6 +348,8 @@ par(cex=1)
 # No dibujamos barplot de composiciones porque el gráfico no es informativo
 ```
 
+Matriz para entender los resultados:
+
 ```{r}
 clust1=data.frame(Orig=Grups[hc$order],
              clust=cutree(dend, k = 3)[order.dendrogram(dend)])
@@ -333,7 +360,8 @@ table(clust1)%>%
 
 ## ALDEx
 
-ALDEx2 estima la variación por edad (A, E, I) dentro de cada muestra utilizando el método de Monte Carlo, las muestras se extraen de la distribución Dirichlet (la beta en el caso multivariado). El muestreo a partir de esta distribución devuelve la distribución de probabilidad posterior de los datos observados bajo un modelo de muestreo repetido. Todas las salidas de ALDEx2 son salidas de las distribuciones posteriores, ya sean valores esperados o intervalos de confianza.
+Permite identificar características (como especies microbianas o genes) que muestran diferencias significativas entre grupos de muestras (A, E, I) utilizando un enfoque basado en la inferencia bayesiana.
+Las muestras se extraen de la distribución Dirichlet (la beta en el caso multivariado). 
 
 ```{r}
 DF0.Aldex=rbind(DF.0[Grups=="A",],DF.0[Grups=="E",], DF.0[Grups=="I",])
@@ -361,15 +389,14 @@ x.tot=cbind(bitxos,x.kw,x.glm)
 saveRDS(x.tot, file="xtotTotal.RData")
 ```
 
-
 ```{r, echo=TRUE}
 x.tot=readRDS("xtotTotal.RData")
 x.tot$bitxos=paste0("OTU.",c(paste("00",1:9),paste("0",10:99),100:276))
 ```
+
 ```{r, eval=FALSE}
 x.tot=readRDS("xtotTotal.RData")
 ```
-
 
 ```{r}
 head(x.tot)%>%
@@ -377,9 +404,14 @@ head(x.tot)%>%
   kable_styling()
 ```
 
-Aquí podemos basarnos en kw.eBH, glm.eBH,  model.condsE, Pr(>|t|).BH,  model.condsI Pr(>|t|).BH
 
+Aquí podemos basarnos en:
 
+* `kw.eBH`: ajuste de p-valores utilizando el método de Benjamini-Hochberg (BH) después de realizar un análisis de varianza de Kruskal-Wallis (KW).
+
+* `glm.eBH`: ajuste de p-valores  utilizando el método de Benjamini-Hochberg (BH) después de ajustar un modelo lineal generalizado (GLM)
+
+* `model.condsE`: se refiere al modelo de regresión ajustado utilizando las variables de composición como predictores y la condición "condsE" como la variable de respuesta.
 
 
 ```{r}
@@ -399,7 +431,7 @@ prova=unlist(sapply(rownames(x.tot.sign),FUN=function(x) which(x==x.tot$bitxos))
 names(prova)=NULL
 ```
 
-Si nos restringimos a estos bichos:
+<font color="blue"> Si nos restringimos a estos bichos </font>:
 
 ```{r}
 DF.s=DF[,prova]

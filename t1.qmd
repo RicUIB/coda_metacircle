@@ -8,11 +8,17 @@ En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
 <center>![](images/poblacion.PNG)</center>
 
-- <font color="red">No podemos comparar muestras con conteos absolutos.</font>
+-   <font color="red">No podemos comparar muestras con conteos absolutos.</font>
 
+<center>![](images/tabla_otus.PNG)</center>
+
+<br>
 -   Podemos ver la diferencia entre conteos y proporciones comparando los datos de tres muestras en el gráfico que se presenta a continuación.
 
-<center>![](images/abundancias_relativas.PNG)</center>
+<center>
+![](images/abundancias_relativas.PNG)</center>
+</center>
+[Gloor G at al. (2017) *Microbiome Datasets are Compositional: And This is Not Optional*](https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224/full)
 
 
 -   Los diagramas de barras muestran la diferencia entre el conteo de moléculas y la proporción de moléculas para dos características, A y B en tres muestras.
@@ -21,32 +27,52 @@ En los datos de secuenciación de alto rendimiento ([HTS]{.highlight} ):
 
 -   En la tabla podemos observar que <font color="red">la relación entre la abundancia absoluta y la abundancia relativa cambia de manera significativa </font>.
 
-
 ## <font color="blue"> Inconvenientes de compararar muestras con abundancias relativas </font> 😵
-
 
 -   Si normalizamos, de manera de que las sumas totales de las filas no importa, entonces las matrices de distancias usuales entre muestras, cambian.
 
 **Ejemplo**
 
+Generamos una tabla de abundancias relativas
+
 ```{r}
 set.seed(5)
 library(ecodist)
-x= round( rnorm (3 ,100 ,10) )
-y= round( rnorm (3 ,100 ,10) )
-z= round( rnorm (3 ,1000 ,100) )
-X= cbind(x,y,z)
-knitr::kable(X) #Conteos absolutos
-knitr::kable(as.matrix(bcdist(X),ncol=2)) # Matriz de distancia de Bray-Curtis conteos absolutos
-
-X1=apply(X, 1, function (x) x/sum(x)) 
-knitr::kable(X1) #Conteos normalizados
-knitr::kable(as.matrix(bcdist(X1),ncol=2)) # Matriz de distancia de Bray-Curtis conteos normalizados
+OTU_1= round(rnorm(4 ,100 ,10) )
+OTU_2= round(rnorm(4 ,100 ,10) )
+OTU_3= round(rnorm(4 ,1000 ,100) )
+datos= data.frame(OTU_1,OTU_2,OTU_3)
+rownames(datos)=c("S1","S2","S3","S4")
+knitr::kable(datos)
 ```
+
+Calculamos la distancia Bray-Curtis de esta tabla de abundancias absolutas
+
+```{r}
+knitr::kable(as.matrix(bcdist(datos),ncol=2)) 
+```
+
+<font color="blue">La distancia más grande es entre S3 y S4 </font>.
+
+Ahora vamos a normalizar la tabla de abundancias absolutas para luego calcular su distancia de Bray-Curtis.
+
+```{r}
+datos_norm=apply(datos, 1, function (datos) datos/sum(datos)) 
+datos_norm=t(datos_norm)
+knitr::kable(datos_norm) #Conteos normalizados
+```
+
+Distancia Bray-curtis para los datos normalizados:
+
+```{r}
+knitr::kable(as.matrix(bcdist(datos_norm),ncol=2))
+```
+
+<font color="blue"> Con esta transformación, la mayor distancia es entre S1 y S3 </font>.
 
 <br>
 
--   <font color="blue">Algunas soluciones:
+-   <font color="green">Algunas soluciones:
 
     -   Subsampling, pero se pierde precisión.
 
@@ -68,25 +94,41 @@ Dos o más OTUs estarán correlacionados simplemente porque los datos han sido t
 
 <br>
 
--   <font color="red"> Si hemos normalizado, los conteos de los microorganismos no son variables independientes ya que están ligados por el valor de la suma.</font>
+-   <font color="red"> Si hemos normalizado, los conteos de los microorganismos (abundancias de los OTUs) no son variables independientes ya que están ligados por el valor de la suma.</font>
+
+A continuación os dejamos la referencia al estudio:
 
 <center>![](images/nature.PNG)</center>
+[Nearing J at al. (2022) *Microbiome differential abundance methods produce different results across 38 datasets *](https://www.nature.com/articles/s41467-022-28034-z)
 
+Los autores reportan lo siguiente:
+
+i) Diferentes métodos (14 tipos de test) que se utilizan para identificar microbios con abundancias diferenciales, han identificado números y conjuntos de ASVs (unidades taxonómicas operativas) significativas, muy diferentes diferentes, y los resultados dependen del pre-procesamiento de los datos. 
+
+ii) Han encontrado que ALDEx2 y ANCOM-II (ambos métodos composicionales) produjeron  los resultados más consistentes entre los estudios (38 conjuntos de datos del gen rRNA 16S con dos grupos de muestras)
+
+Consideremos la figura 4 de este estudio:
 <center>![](images/FP.PNG)</center>
+
+En el eje x se presenta el porcentaje de variantes de secuencia (en escala $\log_{10}$) que son significativas (p-valor <0.05 con corrección Benjamini-Hochberg) para cada conjunto de datos y tipo de test. 
+
+Podemos observar que, en general, el test LEFSe (círculos en color amarillo) y los tests limma presentan mayor porcentaje de réplicas donde se observaron diferencias significativas en la abundancia de la ASV bajo estudio en un grupo u otro de los conjuntos de datos estudiados. Est diferencia esmayor con los datos filtrados.
+
+
+
+
 
 ## Solución
 
 ::: box
 <p class="text-danger">
 
-<font color="red"> Utilizamos otra forma de "normalizar" que preserva la composición de cada muestra y nos permite compararlas: 
-<center>
-</font>**CODA= Compositional Data Analysis**
-</center>
+<font color="red"> Utilizamos otra forma de "normalizar" que preserva la composición de cada muestra y nos permite compararlas:
+
+<center></font>**CODA= Compositional Data Analysis**</center>
+
 </p>
 :::
- 
-
 
 <center>![](images/frontiers.PNG)</center>
 

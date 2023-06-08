@@ -1,6 +1,5 @@
 # Reemplazos composicionales del `tool kit` tradicional 👀
 
-
 <br>
 
 <center>![](images/tabla_1.PNG)</center>
@@ -9,11 +8,20 @@
 
 **Distancia de Aitchison**
 
--   La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de transformación clr.
+-   La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de la transformación clr. Específicamente:
 
-<center>![](images/dA.PNG)</center>
+$$d(x_i,x_j) = \sqrt{ \sum_{k=1}^{D} \left( log \frac{x_{ik}}{g(\mathbf{x}_i)} - log \frac{x_{jk}}{g(\mathbf{x}_j)} \right)^2}
+$$
 
+- La distancia Euclídea:
+$$d(y_i,y_j) = \sqrt{ \sum_{k=1}^{N} \left( y_{ik} - y_{jk} \right)^2}
+$$
+
+Ejemplo de distancia euclídea: 
+
+<center>![](images/dist_eucli.PNG)</center>
 <br>
+
 
 **Correlaciones de datos composicionales**
 

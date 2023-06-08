@@ -1,12 +1,12 @@
 # Principios básicos del CODA
 
-* Cada muestra se considera como un vector de datos composicionales $(x_1, \ldots, x_k)$ con cada $x_i \geq 0$.
+-   Cada muestra se considera como un vector de datos composicionales $(x_1, \ldots, x_k)$ con cada $x_i \geq 0$.
 
-* Consideramos que dos vectores son equivalentes cuando son proporcionales.
+-   Consideramos que dos vectores son equivalentes cuando son proporcionales.
 
-* El análisis de los datos se basa en las ratios $x_i/x_j$.
+-   El análisis de los datos se basa en las ratios $x_i/x_j$.
 
-* Las ratios se transforman mediante logaritmos para traducir comparación relativa en comparación absoluta (y para acercar las ratios a una normal).
+-   Las ratios se transforman mediante logaritmos para traducir comparación relativa en comparación absoluta (y para acercar las ratios a una normal).
 
 [Estas transformaciones producen los mismos resultados si los conteos son absolutos o proporciones]{.highlight}.
 
@@ -28,13 +28,11 @@ $$\mathbf{x}_{clr}= \left( \log(x_1/g(\mathbf{x})),\ldots, \log(x_D/g(\mathbf{x}
 
 donde $g(\mathbf{x})$ es la media geométrica de $\mathbf{x}$, es decir, $g(\mathbf{x})=\sqrt[D]{x_1 \cdot x_2 \cdots x_D}$.
 
-
-**Tratamiento de los ceros:** 
+**Tratamiento de los ceros:**
 
 -   Si alguna variable es cero, no se pueden calcular las ratios.
 
 -   Imputación de ceros: `zCompositions` de R, como una distribución de probabilidad utilizando `ALDEx2` disponible en Bioconductor.
-
 
 ## <font color="red"> Metodología </font>
 
