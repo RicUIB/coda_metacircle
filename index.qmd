@@ -6,10 +6,10 @@
 
 ## Objetivos del seminario 🎯
 
-*i.- Discutiremos los `orígenes` de la composicionalidad en los datos del microbioma.*
+*1.- Discutiremos las diferencias entre trabajar con conteos absolutos (abundancias absolutas) y conteos normalizados (abundancias relativas).*
 
-*ii.- Mostraremos los principales `problemas` de utilizar los métodos estadísticos tradicionales para tratar los datos de secuenciación.*
+*2.- Indicaremos los principios de CODA.*
 
-*iii.- Indicaremos los reemplazos composicionales de las técnicas del `tool kit` de análisis de datos de microbioma.*
+*3.- Mostraremos el tool kit de CODA de microbioma.*
 
-*iv.- `CODA en acción`: trabajaremos con un ejemplo de datos de la microbiota humana, veremos el tipo de resultados que podemos obtener.*
+*4.- CODA en acción: ejemplo de análisis de datos composicionales.*

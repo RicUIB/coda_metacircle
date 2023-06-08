@@ -11,7 +11,7 @@
     "href": "index.html#objetivos-del-seminario",
     "title": "CODA para estudios del microbioma Seminario del proyecto METACIRCLE",
     "section": "Objetivos del seminario 🎯",
-    "text": "Objetivos del seminario 🎯\ni.- Discutiremos los orígenes de la composicionalidad en los datos del microbioma.\nii.- Mostraremos los principales problemas de utilizar los métodos estadísticos tradicionales para tratar los datos de secuenciación.\niii.- Indicaremos los reemplazos composicionales de las técnicas del tool kit de análisis de datos de microbioma.\niv.- CODA en acción: trabajaremos con un ejemplo de datos de la microbiota humana, veremos el tipo de resultados que podemos obtener."
+    "text": "Objetivos del seminario 🎯\n1.- Discutiremos las diferencias entre trabajar con conteos absolutos (abundancias absolutas) y conteos normalizados (abundancias relativas).\n2.- Indicaremos los principios de CODA.\n3.- Mostraremos el tool kit de CODA de microbioma.\n4.- CODA en acción: ejemplo de análisis de datos composicionales."
   },
   {
     "objectID": "t1.html#inconvenientes-de-compararar-muestras-con-abundancias-relativas",
