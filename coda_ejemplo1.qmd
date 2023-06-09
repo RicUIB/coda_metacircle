@@ -7,8 +7,6 @@ Queremo responder la siguiente pregunta:
 ¿Las abundancias de qué OTUs marcan la diferencia entre dos o más tipos de muestra?
 
 
-
-
 ## Carga de librerías de R que utilizaremos
 
 ```{r setup, include=FALSE}
