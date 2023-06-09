@@ -39,7 +39,7 @@
     "href": "t3.html",
     "title": "3  Reemplazos composicionales del tool kit tradicional 👀",
     "section": "",
-    "text": "Distancia de Aitchison\n\nLa distancia de Aitchison no es más que la distancia euclidiana entre muestras después de la transformación clr. Específicamente:\n\n\\[d(x_i,x_j) = \\sqrt{ \\sum_{k=1}^{D} \\left( log \\frac{x_{ik}}{g(\\mathbf{x}_i)} - log \\frac{x_{jk}}{g(\\mathbf{x}_j)} \\right)^2}\n\\]\n\nLa distancia Euclídea: \\[d(y_i,y_j) = \\sqrt{ \\sum_{k=1}^{N} \\left( y_{ik} - y_{jk} \\right)^2}\n\\]\n\nEjemplo de distancia euclídea:\n\n\n\n\nCorrelaciones de datos composicionales\nExisten varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices “sparce”. Uno de ellos es r-sparc."
+    "text": "Distancia de Aitchison\n\nLa distancia de Aitchison no es más que la distancia euclidiana entre muestras después de la transformación clr. Específicamente:\n\n\\[d(x_i,x_j) = \\sqrt{ \\sum_{k=1}^{D} \\left( log \\left(\\frac{x_{ik}}{g(\\mathbf{x}_i)}\\right) - log \\left(\\frac{x_{jk}}{g(\\mathbf{x}_j)} \\right) \\right)^2}\n\\]\n\nLa distancia Euclídea: \\[d(y_i,y_j) = \\sqrt{ \\sum_{k=1}^{N} \\left( y_{ik} - y_{jk} \\right)^2}\n\\]\n\nEjemplo de distancia euclídea:\n\n\n\n\nCorrelaciones de datos composicionales\nExisten varias técnicas para analizar la correlación de los datos del microbioma que suelen ser matrices “sparce”. Uno de ellos es r-sparc."
   },
   {
     "objectID": "coda_ejemplo1.html#carga-de-librerías-de-r-que-utilizaremos",

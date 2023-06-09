@@ -10,7 +10,7 @@
 
 -   La distancia de Aitchison no es más que la distancia euclidiana entre muestras después de la transformación clr. Específicamente:
 
-$$d(x_i,x_j) = \sqrt{ \sum_{k=1}^{D} \left( log \frac{x_{ik}}{g(\mathbf{x}_i)} - log \frac{x_{jk}}{g(\mathbf{x}_j)} \right)^2}
+$$d(x_i,x_j) = \sqrt{ \sum_{k=1}^{D} \left( log \left(\frac{x_{ik}}{g(\mathbf{x}_i)}\right) - log \left(\frac{x_{jk}}{g(\mathbf{x}_j)} \right) \right)^2}
 $$
 
 - La distancia Euclídea:

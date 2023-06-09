@@ -1,13 +1,12 @@
 # CODA en acción 😎: 
 
-Se obtuvieron muestras fecales, en diferentes momentos, de individuos sanos distribuidos en tres grupos de edad: infantes (I), adultos (A) y ancianos (E). La metagenómica se llevó para 218 muestras que superaron los controles de calidad.
+Se obtuvieron muestras fecales, en diferentes momentos, de individuos sanos distribuidos en tres grupos de edad: infantes (I), adultos (A) y ancianos (E). La metagenómica se llevó a cabo para 218 muestras que superaron los controles de calidad.
 
-Queremos responder las siguientes preguntas:
+Queremo responder la siguiente pregunta:
 
-* ¿Las abundancias de qué bichos marcan la diferencia entre dos o más tipos de muestra?
+¿Las abundancias de qué OTUs marcan la diferencia entre dos o más tipos de muestra?
 
-* ¿En qué pares de bichos cambia significativamente la diferencia
-entre sus proporciones entres dos tipos de muestras?
+
 
 
 ## Carga de librerías de R que utilizaremos
